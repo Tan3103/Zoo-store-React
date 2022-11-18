@@ -2,7 +2,6 @@
   "extends": ["react-app", "react-app/jest", "prettier"],
   "rules": {
     "no-unused-vars": "error",
-    "prefer-const": "warn",
     "indent": ["warn", 2],
     "max-len": ["warn", { "code": 720 }],
     "import/order": [
