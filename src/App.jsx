@@ -118,7 +118,6 @@ class App extends React.Component {
           />
         )}
 
-
         {this.state.message && (
           <Message 
             handlerClick={this.handlerClick}
