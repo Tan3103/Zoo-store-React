@@ -1,0 +1,28 @@
+.message {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    left: 0;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    overflow: auto;
+}
+
+.message > div {
+    width: 400px;
+    height: 200px;
+    position: relative;
+    margin: 13% auto;
+    padding: 40px 40px;
+    background: #fff;
+    border-radius: 3px;
+    display: flex;
+}
+
+.message h2 {
+    position: relative;
+    margin: auto;
+    margin-top: 70px;
+}

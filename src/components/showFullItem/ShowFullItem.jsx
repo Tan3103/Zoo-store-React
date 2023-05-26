@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import "./ShowFullItem.css";
 
 export class ShowFullItem extends Component {
   render() {
