@@ -1,7 +1,9 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Routes, Route } from "react-router-dom";
+import { useSelector } from "react-redux";
 
+import { Context } from './context';
 import Header from "./components/header/Header";
 import Footer from "./components/footer/Footer";
 import Items from "./components/items/Items";
@@ -11,151 +13,119 @@ import ShowFullItem from "./components/showFullItem/ShowFullItem";
 import AboutUs from "./components/aboutUs/AboutUs";
 import Message from "./components/message/Message";
 import ErrorAlert from "./components/errorAlert/ErrorAlert";
+import NewItem from "./components/newItem/NewItem";
 
-class App extends Component {
-  state = {
-    isLoaded: false,
-    orders: [],
-    currentItems: [],
-    items: [],
-    showFullItem: false,
-    message: false,
-    fullItem: {},
-    searchValue: "",
-    error: null,
-  };
+function App() {
+  const [, setIsLoaded] = useState(false);
+  const [currentItems, setCurrentItems] = useState([]);
+  const [items, setItems] = useState([]);
+  const [showFullItem, setShowFullItem] = useState(false);
+  const [fullItem, setFullItem] = useState({});
+  const [searchValue, setSearchValue] = useState("");
+  const [error, setError] = useState(null);
 
-  componentDidMount() {
-    this.fetchData();
-  }
+  const [postTitle, setPostTitle] = useState('');
+  const [postCategory, setPostCategory] = useState('');
+  const [postDescription, setPostDescription] = useState('');
+  const [postPrice, setPostPrice] = useState('');
+  const [postImg,  setPostImg] = useState();
+  
+  const message = useSelector(state => state.message);
 
-  componentDidUpdate(prevProps, prevState) {
-    // Выполнение действий при обновлении компонента или изменении его состояния
-    if (prevState.searchValue !== this.state.searchValue) {
-      // Изменилось значение поиска, обновляем текущие элементы
-      const { items, searchValue } = this.state;
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    if (searchValue) {
       const filteredItems = items.filter((el) =>
         el.title.toLowerCase().includes(searchValue.toLowerCase())
       );
-      this.setState({ currentItems: filteredItems });
+      setCurrentItems(filteredItems);
     }
-  }
+  }, [items, searchValue]);
 
-  componentWillUnmount() {
-    // Размонтирование компонента
-    console.log("Компонент размонтирован");
-  }
-
-  componentDidCatch(error, errorInfo) {
-    // Граница обработки ошибок для перехвата и обработки исключений, возникающих в дочерних компонентах
-    console.error("Ошибка, перехваченная в компоненте App:", error);
-    console.error("Информация об ошибке:", errorInfo);
-    this.setState({ error });
-  }
-
-  fetchData = async () => {
+  const fetchData = async () => {
     try {
       const itemsResponse = await axios.get(
         "https://63887325d94a7e50409bdb32.mockapi.io/api/items/item"
       );
 
-      this.setState({
-        items: itemsResponse.data,
-        currentItems: itemsResponse.data,
-        isLoaded: true,
-      });
+      setItems(itemsResponse.data);
+      setCurrentItems(itemsResponse.data);
+      setIsLoaded(true);
     } catch (error) {
-      this.setState({ error });
+      setError(error);
     }
   };
 
-  addToOrder = (item) => {
-    const { orders } = this.state;
-
-    let isInArray = false;
-
-    orders.forEach((el) => {
-      if (el.id === item.id) isInArray = true;
-    });
-
-    if (!isInArray) {
-      this.setState({ orders: [...orders, item] });
-      this.handlerClick();
-    }
+  const onDelete = () => {
+    setPostTitle('');
+    setPostCategory('');
+    setPostDescription('');
+    setPostPrice('');
+    setPostImg('');
   };
 
-  deleteOrder = (id) => {
-    const { orders } = this.state;
-
-    this.setState({ orders: orders.filter((el) => el.id !== id) });
-  };
-
-  chooseCategory = (category) => {
-    const { items } = this.state;
-
+  const chooseCategory = (category) => {
     if (category === "all") {
-      this.setState({ currentItems: items });
-      return;
+      setCurrentItems(items);
+    } else {
+      setCurrentItems(items.filter((el) => el.category === category));
     }
-
-    this.setState({
-      currentItems: items.filter((el) => el.category === category),
-    });
   };
 
-  onShowItem = (item) => {
-    this.setState((prevState) => ({
-      fullItem: item,
-      showFullItem: !prevState.showFullItem,
-    }));
+  const onShowItem = (item) => {
+    setFullItem(item);
+    setShowFullItem((prevState) => !prevState);
   };
 
-  handlerClick = () => {
-    this.setState((prevState) => ({
-      message: !prevState.message,
-    }));
-  };
-
-  onSearchInput = (e) => {
+  const onSearchInput = (e) => {
+    if (e.target.value === "") {
+      setCurrentItems(items);
+    }
     const searchInputValue = e.target.value;
-
-    this.setState({ searchValue: searchInputValue }, () => {
-      const { items, searchValue } = this.state;
-
-      const filteredItems = items.filter((el) =>
-        el.title.toLowerCase().includes(searchValue.toLowerCase())
-      );
-
-      this.setState({ currentItems: filteredItems });
-    });
+    setSearchValue(searchInputValue);
   };
 
-  render() {
-    const {
-      orders,
-      currentItems,
-      showFullItem,
-      fullItem,
-      message,
-      searchValue,
-      error,
-    } = this.state;
+  const onSearchClear = (e) => {
+    setSearchValue("");
+    setCurrentItems(items);
+  };
 
-    if (error) {
-      return (
-        <div className="wrapper">
-          <ErrorAlert message="Ошибка при загрузке данных. Пожалуйста, повторите попытку позже." />
-        </div>
-      );
-    }
-
+  if (error) {
     return (
       <div className="wrapper">
-        <Header orders={orders} onDelete={this.deleteOrder}>
-          <Search
-            searchValue={searchValue}
-            onSearchInput={this.onSearchInput}
-          />
+        <ErrorAlert message="Ошибка при загрузке данных. Пожалуйста, повторите попытку позже." />
+      </div>
+    );
+  }
+
+  return (
+    <Context.Provider
+      value={{  
+        items,
+        searchValue,
+        setSearchValue,
+        onShowItem,
+        fullItem,
+        postTitle,
+        setPostTitle,
+        postPrice,
+        setPostPrice,
+        postImg,
+        setPostImg,
+        setItems,
+        postCategory,
+        setPostCategory,
+        postDescription,
+        setPostDescription,
+        onDelete
+      }}
+    >
+      <div className="wrapper">
+        <Header>
+          <Search searchValue={searchValue} onSearchInput={onSearchInput} onSearchClear={onSearchClear}/>
         </Header>
 
         <Routes>
@@ -163,34 +133,28 @@ class App extends Component {
             path="/"
             element={
               <div>
-                <Categories chooseCategory={this.chooseCategory} />
-                <Items
-                  onShowItem={this.onShowItem}
-                  items={currentItems}
-                  onAdd={this.addToOrder}
-                />
+                <Categories chooseCategory={chooseCategory} />
+                <Items onShowItem={onShowItem} items={currentItems} />
               </div>
             }
-          ></Route>
+          />
 
           <Route path="/aboutUs" element={<AboutUs />} />
+          <Route path="/newItem"  element={<NewItem />} />
         </Routes>
 
         {showFullItem && (
           <ShowFullItem
-            onAdd={this.addToOrder}
-            onShowItem={this.onShowItem}
-            item={fullItem}
-            handlerClick={this.handlerClick}
+            onShowItem={onShowItem}
           />
         )}
 
-        {message && <Message handlerClick={this.handlerClick} />}
+        {message && <Message/>}
 
         <Footer />
       </div>
-    );
-  }
+    </Context.Provider>
+  );
 }
 
 export default App;

@@ -1,7 +1,8 @@
 import React from "react";
 
-const Search = ({ searchValue, onSearchInput, setSearchValue }) => {
+import "./Search.css";
 
+const Search = ({ searchValue, onSearchInput, setSearchValue, onSearchClear }) => {
   return (
     <div className="search">
       <div className="search-block">
@@ -9,7 +10,7 @@ const Search = ({ searchValue, onSearchInput, setSearchValue }) => {
         {searchValue && (
           <img
             className="clear"
-            onClick={() => setSearchValue('')}
+            onClick={() => onSearchClear()}
             src="img/btn-remove.svg"
             alt="Clear"
           />

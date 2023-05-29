@@ -1,16 +1,23 @@
-import React, { Component } from "react";
+import React from "react";
 import "./Message.css";
+import { useDispatch } from "react-redux";
 
-export class Message extends Component {
-  render() {
-    return (
-      <div className="message" onClick={() => this.props.handlerClick()}>
-        <div>
-          <h2>Товар добавлен в корзину!</h2>
-        </div>
+import { handlerClickFunc } from "../../store/reducers";
+
+const Message = () => {
+  const dispatch = useDispatch();
+
+  const handlerClick = () => {
+    dispatch(handlerClickFunc());
+  };
+
+  return (
+    <div className="message" onClick={handlerClick}>
+      <div>
+        <h2>Товар добавлен в корзину!</h2>
       </div>
-    );
-  }
-}
+    </div>
+  );
+};
 
 export default Message;

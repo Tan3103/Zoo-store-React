@@ -1,27 +1,28 @@
-import React, { Component } from "react";
-import "./Item.css";
+import React from "react";
+import { useDispatch } from "react-redux";
 
-export class Item extends Component {
-  render() {
-    return (
-      <div className="item">
-        <div
-          className="div-img"
-          onClick={() => this.props.onShowItem(this.props.item)}
-        >
-          <img src={this.props.item.img} alt="Error" />
-        </div>
-        <h4>{this.props.item.title}</h4>
-        <p>ЦЕНА: {this.props.item.price}₸</p>
-        <div
-          className="add-to-cart"
-          onClick={() => this.props.onAdd(this.props.item)}
-        >
-          +
-        </div>
+import "./Item.css";
+import { addToOrderFunc, handlerClickFunc } from "../../store/reducers";
+
+const Item = ({ item, onShowItem }) => {
+  const dispatch = useDispatch();
+
+  const onAdd = (item) => {
+    dispatch(addToOrderFunc(item), handlerClickFunc());
+  };
+
+  return (
+    <div className="item">
+      <div className="div-img" onClick={() => onShowItem(item)}>
+        <img src={item.img} alt="Error" />
       </div>
-    );
-  }
-}
+      <h4>{item.title}</h4>
+      <p>ЦЕНА: {item.price}₸</p>
+      <div className="add-to-cart" onClick={() => onAdd(item)}>
+        +
+      </div>
+    </div>
+  );
+};
 
 export default Item;

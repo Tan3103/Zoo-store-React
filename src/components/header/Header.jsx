@@ -1,12 +1,15 @@
 import React, { useState } from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 import Order from "../order/Order";
 import "./Header.css";
 
-const Header = ({ orders, onDelete, children }) => {
+const Header = ({ children }) => {
   let [cartOpen, setCartOpen] = useState(false);
+
+  const orders = useSelector(state => state.orders);
 
   const showOrders = () => {
     let summa = 0;
@@ -15,7 +18,7 @@ const Header = ({ orders, onDelete, children }) => {
     return (
       <div>
         {orders.map((el) => (
-          <Order onDelete={onDelete} key={el.id} item={el} />
+          <Order key={el.id} item={el} />
         ))}
 
         <p className="summa">Сумма: {new Intl.NumberFormat().format(summa)}₸</p>
@@ -40,12 +43,13 @@ const Header = ({ orders, onDelete, children }) => {
           <li className="nav-main">
             <Link to="/">Главная</Link>
           </li>
-          
           <li>
             <Link to="/aboutUs">Про нас</Link>
           </li>
+          <li>
+            <Link to="/newItem">Добавить</Link>
+          </li>
           <li> Кабинет </li>
-          {/* Add your login and logout functionality here */}
         </ul>
         <FaShoppingCart
           onClick={() => setCartOpen((cartOpen) => !cartOpen)}
