@@ -1,0 +1,37 @@
+main h4,
+.full-item h2,
+main p,
+.full-item p,
+main b,
+.full-item b {
+    margin: 10px 20px;
+    color: #333;
+}
+
+main b,
+.full-item b {
+    color: #5fa36a;
+}
+
+main .add-to-cart,
+.full-item .add-to-cart {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    background: #ca5252;
+    width: 35px;
+    height: 35px;
+    text-align: center;
+    line-height: 35px;
+    color: #fff;
+    border-radius: 50%;
+    cursor: pointer;
+    font-weight: 900;
+    font-size: larger;
+    transition: transform 500ms ease;
+}
+
+main .add-to-cart:hover,
+.full-item .add-to-cart:hover {
+    transform: scale(1.2) translate(-2px);
+}
